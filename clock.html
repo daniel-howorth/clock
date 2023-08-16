@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS + CSS Clock</title>
+    <link rel="icon" href="https://fav.farm/🔥" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="side-panel"></div>
+    <div class="clock-container">
+      <div class="toggle">
+        <form id="clock-type">
+          <input
+            type="radio"
+            name="clock-type"
+            id="use-clock"
+            value="use-clock"
+            checked="true"
+          />
+          <label for="use-clock">Clock</label>
+          <input
+            type="radio"
+            name="clock-type"
+            id="use-timer"
+            value="use-timer"
+          />
+          <label for="use-timer">Stopwatch</label>
+        </form>
+      </div>
+      <div class="clock">
+        <div class="clock-face">
+          <div class="hand hour-hand"></div>
+          <div class="hand min-hand"></div>
+          <div class="hand second-hand"></div>
+          <div class="middle"></div>
+          <div class="digital-timer">
+            <p class="digital-time">00:00:00</p>
+          </div>
+        </div>
+      </div>
+      <div class="timer-controls">
+        <button class="btn start-btn">Start</button>
+        <button disabled class="btn lap-btn">Lap</button>
+        <button class="btn reset-btn">Reset</button>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="laps-container">
+        <table class="lap-table">
+          <tr class="table-header">
+            <th>Lap</th>
+            <th>Lap Time</th>
+            <th>Total Time</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <script src="clock.js"></script>
+  </body>
+</html>
