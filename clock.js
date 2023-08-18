@@ -95,6 +95,8 @@ function setTimer() {
   const minute = Math.floor((timerCounter - hour * 3600) / 60);
   const updSecond = timerCounter - (hour * 3600 + minute * 60);
 
+  // refactor this? getDegrees?
+
   // sets the analog timer
   const secondsDegrees = (updSecond / 60) * 360 + 90;
   const minutesDegrees = (minute / 60) * 360 + 90;
@@ -111,28 +113,6 @@ function setTimer() {
 
   const digitalTime = `${digitalHour}:${digitalMinute}:${digitalSecond}`;
   digitalTimer.firstElementChild.innerHTML = digitalTime;
-}
-
-function resetTimer() {
-  clearInterval(timer);
-  timerCounter = 0;
-  laps = {};
-  totalLaps = 0;
-  secondHand.style.transform = `rotate(90deg)`;
-  minuteHand.style.transform = `rotate(90deg)`;
-  hourHand.style.transform = `rotate(90deg)`;
-  digitalTimer.firstElementChild.innerHTML = "00:00:00";
-  startPauseBtn.className = "btn start-btn";
-  startPauseBtn.innerHTML = "Start";
-  lapsContainer.style.height = 0;
-  lapsContainer.style.visibility = `hidden`;
-  lapTable.innerHTML = `<table class="lap-table">
-    <tr class="table-header">
-      <th>Lap</th>
-      <th>Lap Time</th>
-      <th>Total Time</th>
-    </tr>
-  </table>`;
 }
 
 function startPauseHandler() {
@@ -155,7 +135,7 @@ function startTimer() {
 function pauseTimer() {
   // stops calling setTimer but the timerCounter keeps the count so that timing can be resumed.
   clearInterval(timer);
-  setPausedControls();
+  setInactiveControls();
 }
 
 // set the styles for the timer controls when the timer is active.
@@ -166,12 +146,37 @@ function setActiveControls() {
   lapBtn.style.cursor = `default`;
 }
 
-// set the styles for the timer controls when the timer is paused.
-function setPausedControls() {
+// set the styles for the timer controls when the timer is inactive.
+function setInactiveControls() {
   startPauseBtn.className = "btn start-btn";
   startPauseBtn.innerHTML = "Start";
   lapBtn.disabled = true;
   lapBtn.style.cursor = `not-allowed`;
+}
+
+function resetTimer() {
+  clearInterval(timer);
+  timerCounter = 0;
+  laps = {};
+  totalLaps = 0;
+  secondHand.style.transform = `rotate(90deg)`;
+  minuteHand.style.transform = `rotate(90deg)`;
+  hourHand.style.transform = `rotate(90deg)`;
+  digitalTimer.firstElementChild.innerHTML = "00:00:00";
+  setInactiveControls();
+  initialiseLapTable();
+}
+
+function initialiseLapTable() {
+  lapsContainer.style.height = 0;
+  lapsContainer.style.visibility = `hidden`;
+  lapTable.innerHTML = `<table class="lap-table">
+    <tr class="table-header">
+      <th>Lap</th>
+      <th>Lap Time</th>
+      <th>Total Time</th>
+    </tr>
+  </table>`;
 }
 
 function addLap() {
@@ -182,6 +187,7 @@ function addLap() {
   const minute = Math.floor((lapCounter - hour * 3600) / 60);
   const updSecond = lapCounter - (hour * 3600 + minute * 60);
 
+  // refactor this into getDigitalTime function
   const digitalSecond = String(updSecond).padStart(2, "0");
   const digitalMinute = String(minute).padStart(2, "0");
   const digitalHour = String(hour).padStart(2, "0");
@@ -195,16 +201,21 @@ function addLap() {
 
   lapCounter = 0;
 
+  // do we need to pass global variable?
   displayLap(totalLaps);
 }
 
 function displayLap(lapNumber) {
+  //  refactor this? getNewLap? formatLapEntry?
   const lap = `<tr class="lap">
     <td>${lapNumber}</td>
     <td>${laps[lapNumber].lapTime}</td>
     <td>${laps[lapNumber].totalTime}</td>
   </tr>`;
+
   lapTable.innerHTML += lap;
+
+  // if here?
   lapsContainer.style.visibility = `visible`;
 
   if (lapTable.rows.length <= 7) {
@@ -213,6 +224,6 @@ function displayLap(lapNumber) {
   } else {
     lapsContainer.style.overflow = `scroll`;
   }
-  console.log(lapTable.rows.length);
-  console.log(lapTable);
+  // console.log(lapTable.rows.length);
+  // console.log(lapTable);
 }
