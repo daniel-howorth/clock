@@ -41,6 +41,7 @@ function setClockType() {
     resetTimer();
   }
 }
+
 /*
 sets the time of the clock to the current time of the second it is called. 
 only sets the time if the user has selected to use the clock.
@@ -53,9 +54,11 @@ function setClock() {
     const hours = now.getHours();
 
     // converts the time to degress to set the angle of the clock hands
-    const secondsDegrees = (seconds / 60) * 360 + 90;
-    const minutesDegrees = (minutes / 60) * 360 + 90;
-    const hoursDegrees = (hours / 12) * 360 + 90;
+    const [secondsDegrees, minutesDegrees, hoursDegrees] = getDegrees(
+      seconds,
+      minutes,
+      hours
+    );
 
     secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
     minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
@@ -95,24 +98,28 @@ function setTimer() {
   const minute = Math.floor((timerCounter - hour * 3600) / 60);
   const updSecond = timerCounter - (hour * 3600 + minute * 60);
 
-  // refactor this? getDegrees?
-
   // sets the analog timer
-  const secondsDegrees = (updSecond / 60) * 360 + 90;
-  const minutesDegrees = (minute / 60) * 360 + 90;
-  const hoursDegrees = (hour / 12) * 360 + 90;
+  const [secondsDegrees, minutesDegrees, hoursDegrees] = getDegrees(
+    updSecond,
+    minute,
+    hour
+  );
 
   secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
   minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
   hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
 
-  // sets digital timer
-  const digitalSecond = String(updSecond).padStart(2, "0");
-  const digitalMinute = String(minute).padStart(2, "0");
-  const digitalHour = String(hour).padStart(2, "0");
-
-  const digitalTime = `${digitalHour}:${digitalMinute}:${digitalSecond}`;
+  // sets the digital timer
+  const digitalTime = formatDigitalTime(updSecond, minute, hour);
   digitalTimer.firstElementChild.innerHTML = digitalTime;
+}
+
+// converts time into degrees so that the clock hands can be set
+function getDegrees(seconds, minutes, hours) {
+  const secondsDegrees = (seconds / 60) * 360 + 90;
+  const minutesDegrees = (minutes / 60) * 360 + 90;
+  const hoursDegrees = (hours / 12) * 360 + 90;
+  return [secondsDegrees, minutesDegrees, hoursDegrees];
 }
 
 function startPauseHandler() {
@@ -183,47 +190,63 @@ function addLap() {
   totalLaps++;
   const totalTime = digitalTimer.firstElementChild.innerHTML;
 
+  // uses lapCounter to get the number of seconds, minutes, and hours elapsed in the lap.
+  // *********** understand this ****************
   const hour = Math.floor(lapCounter / 3600);
   const minute = Math.floor((lapCounter - hour * 3600) / 60);
   const updSecond = lapCounter - (hour * 3600 + minute * 60);
 
-  // refactor this into getDigitalTime function
-  const digitalSecond = String(updSecond).padStart(2, "0");
-  const digitalMinute = String(minute).padStart(2, "0");
-  const digitalHour = String(hour).padStart(2, "0");
+  const lapTime = formatDigitalTime(updSecond, minute, hour);
 
-  const lapTime = `${digitalHour}:${digitalMinute}:${digitalSecond}`;
-
+  // add lap data to laps object
+  // totalLaps keeps track of how many laps have been added and is also the index of the latest lap
   laps[totalLaps] = {
     lapTime: lapTime,
     totalTime: totalTime,
   };
 
   lapCounter = 0;
-
-  // do we need to pass global variable?
-  displayLap(totalLaps);
+  displayLap();
 }
 
-function displayLap(lapNumber) {
-  //  refactor this? getNewLap? formatLapEntry?
-  const lap = `<tr class="lap">
-    <td>${lapNumber}</td>
-    <td>${laps[lapNumber].lapTime}</td>
-    <td>${laps[lapNumber].totalTime}</td>
-  </tr>`;
+// converts time to digital format
+function formatDigitalTime(seconds, minutes, hours) {
+  const digitalSeconds = String(seconds).padStart(2, "0");
+  const digitalMinutes = String(minutes).padStart(2, "0");
+  const digitalHours = String(hours).padStart(2, "0");
 
-  lapTable.innerHTML += lap;
+  return `${digitalHours}:${digitalMinutes}:${digitalSeconds}`;
+}
 
-  // if here?
-  lapsContainer.style.visibility = `visible`;
+// add the latest lap to the lap table
+function displayLap() {
+  const latestLap = getLapEntry();
+  lapTable.innerHTML += latestLap;
 
+  // before any laps have been added, lapsContainer is hidden by default.
+  if ((lapsContainer.style.visibility = "hidden")) {
+    lapsContainer.style.visibility = `visible`;
+  }
+
+  /*
+  checks how many laps are in the lap table and adjusts the table container height accordingly.
+  if there are 7 or less entries, container height is increased when a new lap is added.
+  when there are more than 7 entries, the container height remains fixed and scroll is enabled to view further entries.
+*/
   if (lapTable.rows.length <= 7) {
     let lapsContainerHeight = 50 * lapTable.rows.length;
     lapsContainer.style.height = `${lapsContainerHeight}px`;
   } else {
     lapsContainer.style.overflow = `scroll`;
   }
-  // console.log(lapTable.rows.length);
-  // console.log(lapTable);
+}
+
+// formats the latest lap into a table entry
+// totalLaps will also be the index of the latest lap
+function getLapEntry() {
+  return `<tr>
+    <td>${totalLaps}</td>
+    <td>${laps[totalLaps].lapTime}</td>
+    <td>${laps[totalLaps].totalTime}</td>
+  </tr>`;
 }
