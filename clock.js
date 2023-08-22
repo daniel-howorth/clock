@@ -1,4 +1,4 @@
-// golobal variables
+// global variables
 let clockType = "use-clock";
 let timer;
 let timerCounter = 0;
@@ -43,7 +43,7 @@ function setClockType() {
 }
 
 /*
-sets the time of the clock to the current time of the second it is called. 
+sets the time of the clock to the time at which it is called. 
 only sets the time if the user has selected to use the clock.
 */
 function setClock() {
@@ -60,10 +60,23 @@ function setClock() {
       hours
     );
 
-    secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
-    minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
-    hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+    setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
   }
+}
+
+// converts time into degrees so that the clock hands can be set
+function getDegrees(seconds, minutes, hours) {
+  const secondsDegrees = (seconds / 60) * 360 + 90;
+  const minutesDegrees = (minutes / 60) * 360 + 90;
+  const hoursDegrees = (hours / 12) * 360 + 90;
+  return [secondsDegrees, minutesDegrees, hoursDegrees];
+}
+
+// takes degrees as arguments and sets the clock hands accordingly.
+function setClockHands(secondsDegrees, minutesDegrees, hoursDegrees) {
+  secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+  minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+  hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
 }
 
 // ################################################## Timer Functionality ####################################################################
@@ -72,9 +85,7 @@ function setClock() {
 function initialiseTimer() {
   timerControls.style.transform = "translateY(-240px)";
   digitalTimer.style.opacity = "1";
-  secondHand.style.transform = `rotate(90deg)`;
-  minuteHand.style.transform = `rotate(90deg)`;
-  hourHand.style.transform = `rotate(90deg)`;
+  setClockHands(90, 90, 90);
 }
 
 // hides the timer functionality
@@ -104,22 +115,20 @@ function setTimer() {
     minute,
     hour
   );
-
-  secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
-  minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
-  hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+  setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
 
   // sets the digital timer
   const digitalTime = formatDigitalTime(updSecond, minute, hour);
   digitalTimer.firstElementChild.innerHTML = digitalTime;
 }
 
-// converts time into degrees so that the clock hands can be set
-function getDegrees(seconds, minutes, hours) {
-  const secondsDegrees = (seconds / 60) * 360 + 90;
-  const minutesDegrees = (minutes / 60) * 360 + 90;
-  const hoursDegrees = (hours / 12) * 360 + 90;
-  return [secondsDegrees, minutesDegrees, hoursDegrees];
+// converts time to digital format
+function formatDigitalTime(seconds, minutes, hours) {
+  const digitalSeconds = String(seconds).padStart(2, "0");
+  const digitalMinutes = String(minutes).padStart(2, "0");
+  const digitalHours = String(hours).padStart(2, "0");
+
+  return `${digitalHours}:${digitalMinutes}:${digitalSeconds}`;
 }
 
 function startPauseHandler() {
@@ -166,9 +175,7 @@ function resetTimer() {
   timerCounter = 0;
   laps = {};
   totalLaps = 0;
-  secondHand.style.transform = `rotate(90deg)`;
-  minuteHand.style.transform = `rotate(90deg)`;
-  hourHand.style.transform = `rotate(90deg)`;
+  setClockHands(90, 90, 90);
   digitalTimer.firstElementChild.innerHTML = "00:00:00";
   setInactiveControls();
   initialiseLapTable();
@@ -209,15 +216,6 @@ function addLap() {
   displayLap();
 }
 
-// converts time to digital format
-function formatDigitalTime(seconds, minutes, hours) {
-  const digitalSeconds = String(seconds).padStart(2, "0");
-  const digitalMinutes = String(minutes).padStart(2, "0");
-  const digitalHours = String(hours).padStart(2, "0");
-
-  return `${digitalHours}:${digitalMinutes}:${digitalSeconds}`;
-}
-
 // add the latest lap to the lap table
 function displayLap() {
   const latestLap = getLapEntry();
@@ -250,3 +248,22 @@ function getLapEntry() {
     <td>${laps[totalLaps].totalTime}</td>
   </tr>`;
 }
+
+/*
+TO DO:
+fix bug
+clock type switch
+modules? code organisation? refactoring functions? how should I order functions?
+understanding logic
+*/
+
+/*
+Make notes/anki cards:
+query selector
+event listeners
+changing css with js (individual styles and setting classes)
+string literals
+++ at start vs ++ at end
+array destructuring
+look in sandbox files for more notes
+*/
