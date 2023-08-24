@@ -19,11 +19,11 @@ const digitalTimer = document.querySelector(".digital-timer");
 const lapBtn = document.querySelector(".lap-btn");
 const lapTable = document.querySelector(".lap-table");
 const lapsContainer = document.querySelector(".laps-container");
-const timerSwitch = document.querySelector("#timer-switch");
+const clockSwitch = document.querySelector("#clock-switch");
 
 // event handlers
 // clockTypeForm.addEventListener("change", setClockType);
-timerSwitch.addEventListener("change", setClockType);
+clockSwitch.addEventListener("change", setClockType);
 startPauseBtn.addEventListener("click", startPauseHandler);
 resetBtn.addEventListener("click", resetTimer);
 lapBtn.addEventListener("click", addLap);
@@ -33,9 +33,9 @@ lapBtn.addEventListener("click", addLap);
 // calls setClock every second on page load.
 clock = setInterval(setClock, 1000);
 
-// checks if the timer switch is checked and uses the selected clock (clock/timer). Clock selected as default.
+// checks if the clock switch is checked and uses the selected clock (clock/timer). checked = use timer. clock selected as default.
 function setClockType() {
-  if (timerSwitch.checked) {
+  if (clockSwitch.checked) {
     clearInterval(clock);
     initialiseTimer();
   } else {
@@ -253,9 +253,10 @@ function getLapEntry() {
 /*
 TO DO:
 fix bug
-clock type switch
 modules? code organisation? refactoring functions? how should I order functions?
 understanding logic
+make responsive
+clean up comments
 */
 
 /*

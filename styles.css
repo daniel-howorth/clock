@@ -225,7 +225,6 @@ label {
   width: 70px;
   height: 30px;
   background: rgba(0, 0, 0, 0.4);
-  /* background-color: gray; */
   border: 2px solid rgba(0, 0, 0, 0.6);
   display: block;
   border-radius: 100px;
@@ -254,10 +253,6 @@ input:checked + label:after {
 #switch-container {
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(0, 0, 0, 0.6);
-  border-radius: 20px;
-  padding: 0 10px;
   font-size: 18px;
 }
 
