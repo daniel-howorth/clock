@@ -9,24 +9,14 @@
   <body>
     <div class="side-panel"></div>
     <div class="clock-container">
-      <div class="toggle">
-        <form id="clock-type">
-          <input
-            type="radio"
-            name="clock-type"
-            id="use-clock"
-            value="use-clock"
-            checked="true"
-          />
-          <label for="use-clock">Clock</label>
-          <input
-            type="radio"
-            name="clock-type"
-            id="use-timer"
-            value="use-timer"
-          />
-          <label for="use-timer">Stopwatch</label>
-        </form>
+      <div id="switch-container">
+        <h2>Clock</h2>
+        <div id="switch-box">
+          <input type="checkbox" id="timer-switch" /><label
+            for="timer-switch"
+          ></label>
+        </div>
+        <h2>Timer</h2>
       </div>
       <div class="clock">
         <div class="clock-face">

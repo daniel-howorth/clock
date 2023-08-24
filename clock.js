@@ -1,5 +1,6 @@
 // global variables
 let clockType = "use-clock";
+let clock;
 let timer;
 let timerCounter = 0;
 let lapCounter = 0;
@@ -18,27 +19,29 @@ const digitalTimer = document.querySelector(".digital-timer");
 const lapBtn = document.querySelector(".lap-btn");
 const lapTable = document.querySelector(".lap-table");
 const lapsContainer = document.querySelector(".laps-container");
+const timerSwitch = document.querySelector("#timer-switch");
 
 // event handlers
-clockTypeForm.addEventListener("change", setClockType);
+// clockTypeForm.addEventListener("change", setClockType);
+timerSwitch.addEventListener("change", setClockType);
 startPauseBtn.addEventListener("click", startPauseHandler);
 resetBtn.addEventListener("click", resetTimer);
 lapBtn.addEventListener("click", addLap);
 
 // ################################################## Clock Functionality ####################################################################
 
-// calls setClock every second. setClock only sets the current clock time if use-clock has been selected.
-setInterval(setClock, 1000);
+// calls setClock every second on page load.
+clock = setInterval(setClock, 1000);
 
-// checks the selected value of the clock-type input and uses the selected clock (clock/timer). Clock selected as default.
+// checks if the timer switch is checked and uses the selected clock (clock/timer). Clock selected as default.
 function setClockType() {
-  clockType = document.querySelector('input[name="clock-type"]:checked').value;
-
-  if (clockType == "use-timer") {
+  if (timerSwitch.checked) {
+    clearInterval(clock);
     initialiseTimer();
-  } else if (clockType == "use-clock") {
+  } else {
     hideTimer();
     resetTimer();
+    clock = setInterval(setClock, 1000);
   }
 }
 
@@ -47,21 +50,19 @@ sets the time of the clock to the time at which it is called.
 only sets the time if the user has selected to use the clock.
 */
 function setClock() {
-  if (clockType == "use-clock") {
-    const now = new Date();
-    const seconds = now.getSeconds();
-    const minutes = now.getMinutes();
-    const hours = now.getHours();
+  const now = new Date();
+  const seconds = now.getSeconds();
+  const minutes = now.getMinutes();
+  const hours = now.getHours();
 
-    // converts the time to degress to set the angle of the clock hands
-    const [secondsDegrees, minutesDegrees, hoursDegrees] = getDegrees(
-      seconds,
-      minutes,
-      hours
-    );
+  // converts the time to degress to set the angle of the clock hands
+  const [secondsDegrees, minutesDegrees, hoursDegrees] = getDegrees(
+    seconds,
+    minutes,
+    hours
+  );
 
-    setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
-  }
+  setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
 }
 
 // converts time into degrees so that the clock hands can be set
@@ -159,7 +160,7 @@ function setActiveControls() {
   startPauseBtn.className = "btn pause-btn";
   startPauseBtn.innerHTML = "Pause";
   lapBtn.disabled = false;
-  lapBtn.style.cursor = `default`;
+  lapBtn.style.cursor = `pointer`;
 }
 
 // set the styles for the timer controls when the timer is inactive.
