@@ -225,6 +225,7 @@ label {
   width: 70px;
   height: 30px;
   background: rgba(0, 0, 0, 0.4);
+  /* background-color: gray; */
   border: 2px solid rgba(0, 0, 0, 0.6);
   display: block;
   border-radius: 100px;
@@ -238,7 +239,7 @@ label:after {
   left: 2px;
   width: calc(20px);
   height: calc(100% - 10px);
-  background: #fff;
+  background: white;
   border-radius: 90px;
   transition: 0.3s;
   border: 2px solid rgba(0, 0, 0, 0.6);
@@ -253,6 +254,11 @@ input:checked + label:after {
 #switch-container {
   display: flex;
   align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  padding: 0 10px;
+  font-size: 18px;
 }
 
 #switch-box {
