@@ -8,6 +8,7 @@ let laps = {};
 let totalLaps = 0;
 
 // components
+const hands = document.querySelectorAll(".hand");
 const secondHand = document.querySelector(".second-hand");
 const minuteHand = document.querySelector(".min-hand");
 const hourHand = document.querySelector(".hour-hand");
@@ -33,7 +34,7 @@ lapBtn.addEventListener("click", addLap);
 // calls setClock every second on page load.
 clock = setInterval(setClock, 1000);
 
-// checks if the clock switch is checked and uses the selected clock (clock/timer). checked = use timer. clock selected as default.
+// checks the state of the clock switch and uses the selected clock (clock/timer) accordingly. checked = use timer. clock selected as default.
 function setClockType() {
   if (clockSwitch.checked) {
     clearInterval(clock);
@@ -61,6 +62,25 @@ function setClock() {
     minutes,
     hours
   );
+
+  // fixes glitch where hands transition from 12 to 1 anti-clockwise by removing the transition styles when the degrees are 90.
+  if (secondsDegrees === 90) {
+    secondHand.style.transition = "none";
+  } else {
+    secondHand.style.transition = "";
+  }
+
+  if (minutesDegrees === 90) {
+    minuteHand.style.transition = "none";
+  } else {
+    minuteHand.style.transition = "";
+  }
+
+  if (hoursDegrees === 90) {
+    hourHand.style.transition = "none";
+  } else {
+    hourHand.style.transition = "";
+  }
 
   setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
 }
@@ -116,6 +136,26 @@ function setTimer() {
     minute,
     hour
   );
+
+  // fixes glitch where hands transition from 12 to 1 anti-clockwise by removing the transition styles when the degrees are 90.
+  if (secondsDegrees === 90) {
+    secondHand.style.transition = "none";
+  } else {
+    secondHand.style.transition = "";
+  }
+
+  if (minutesDegrees === 90) {
+    minuteHand.style.transition = "none";
+  } else {
+    minuteHand.style.transition = "";
+  }
+
+  if (hoursDegrees === 90) {
+    hourHand.style.transition = "none";
+  } else {
+    hourHand.style.transition = "";
+  }
+
   setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
 
   // sets the digital timer
@@ -233,8 +273,7 @@ function displayLap() {
   when there are more than 7 entries, the container height remains fixed and scroll is enabled to view further entries.
 */
   if (lapTable.rows.length <= 7) {
-    let lapsContainerHeight = 50 * lapTable.rows.length;
-    lapsContainer.style.height = `${lapsContainerHeight}px`;
+    lapsContainer.style.height = `calc(50px * ${lapTable.rows.length})`;
   } else {
     lapsContainer.style.overflow = `scroll`;
   }
@@ -252,11 +291,10 @@ function getLapEntry() {
 
 /*
 TO DO:
-fix bug
-modules? code organisation? refactoring functions? how should I order functions?
 understanding logic
-make responsive
 clean up comments
+modules? code organisation? refactoring functions? how should I order functions?
+make responsive
 */
 
 /*
