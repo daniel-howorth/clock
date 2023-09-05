@@ -261,17 +261,3 @@ input:checked + label:after {
   margin-left: 10px;
   margin-right: 15px;
 }
-
-/*
-notes/anki cards/learning:
-
-min-height: 100vh?
-text-align?
-auto?
-variables?
-backgrounds
-translate
-transform
-combinators ( decendants " ", direct child >, adjacent sibling +, general sibling ~ )
-calc - used to perform calculations. can set values using an expression/calculation. i.e. set width to 10px + 10px. width: calc(10px + 10px). width will be 20px. makes elements responsive.
-*/

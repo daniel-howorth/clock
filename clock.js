@@ -23,19 +23,17 @@ const lapsContainer = document.querySelector(".laps-container");
 const clockSwitch = document.querySelector("#clock-switch");
 
 // event handlers
-// clockTypeForm.addEventListener("change", setClockType);
 clockSwitch.addEventListener("change", setClockType);
 startPauseBtn.addEventListener("click", startPauseHandler);
 resetBtn.addEventListener("click", resetTimer);
 lapBtn.addEventListener("click", addLap);
-
-// ################################################## Clock Functionality ####################################################################
 
 // calls setClock every second on page load.
 clock = setInterval(setClock, 1000);
 
 // checks the state of the clock switch and uses the selected clock (clock/timer) accordingly. checked = use timer. clock selected as default.
 function setClockType() {
+  // checked means timer is selected, else clock is selected.
   if (clockSwitch.checked) {
     clearInterval(clock);
     initialiseTimer();
@@ -46,10 +44,7 @@ function setClockType() {
   }
 }
 
-/*
-sets the time of the clock to the time at which it is called. 
-only sets the time if the user has selected to use the clock.
-*/
+// sets the time of the clock to the time at which it is called.
 function setClock() {
   const now = new Date();
   const seconds = now.getSeconds();
@@ -85,7 +80,21 @@ function setClock() {
   setClockHands(secondsDegrees, minutesDegrees, hoursDegrees);
 }
 
-// converts time into degrees so that the clock hands can be set
+/*
+converts time into degrees so that the clock hands can be set.
+
+LOGIC:
+take the seconds, minutes, hours of the current time.
+convert these into a percentage, where 1 = 100%, and multiply by 360 to get the degree.
+
+e.g. 
+there are 60 seconds in a minute.
+we divide the number of seconds by 60 to get the percentage of seconds there have been in the current minute.
+60 seconds / 60 = 1, i.e. 100% of the seconds.
+1 * 360 = 360 degrees, i.e. a full rotation of the clock.
+
+finally, we add 90 to the result to account for the 90 degree offset that the hands start with.
+*/
 function getDegrees(seconds, minutes, hours) {
   const secondsDegrees = (seconds / 60) * 360 + 90;
   const minutesDegrees = (minutes / 60) * 360 + 90;
@@ -99,8 +108,6 @@ function setClockHands(secondsDegrees, minutesDegrees, hoursDegrees) {
   minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
   hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
 }
-
-// ################################################## Timer Functionality ####################################################################
 
 // initialises the timer. sets the hands to 12.
 function initialiseTimer() {
@@ -116,7 +123,7 @@ function hideTimer() {
 }
 
 /*
-when use-timer is selected, upTimer is called every second
+called every second once the timer has started. calculates and tracks the current time. displays the time accordingly.
 the number of seconds elapsed is kept in timerCounter, which is then converted to the degrees for the clock hands.
 the elapsed seconds are also kept in lapCounter to keep track of seconds elapsed in a lap but are reset to zero when a new lap has started.
 */
@@ -124,13 +131,34 @@ function setTimer() {
   ++timerCounter;
   ++lapCounter;
 
-  // ****************  understand the logic for this  ********************
-  // gets the elapsed time
+  /* 
+  gets the elapsed seconds, minutes, hours
+
+  LOGIC: 
+  timerCounter counts the number of seconds that have elapsed since the timer started.
+  3600 = number of seconds in a hour.
+  Math.floor rounds a number down to the nearest integer.
+  
+  To get the hours...
+  divide the total number of seconds (timerCounter) by 3600 to get the number of elapsed hours.
+  for every 3600 seconds in timerCounter, 1 hour has elapsed.
+  e.g 3600 seconds / 3600 = 1 hour.
+  round down using Math.floor to get the nearest whole hour.
+
+  To get the minutes...
+  hour * 3600 converts the number of whole hours back into seconds.
+  we subtract this from the total number of seconds (timerCounter) to leave the elapsed seconds minus the hours that have already been counted.
+  divide this by 60 and round down to get the number of whole minutes in the current hour.
+
+  To get the seconds...
+  convert the hours and minutes back into seconds by multiplying them by 3600 and 60 respectively.
+  subtract the hours and minutes that have already been counted (in seconds) to get the remaining seconds.
+  */
   const hour = Math.floor(timerCounter / 3600);
   const minute = Math.floor((timerCounter - hour * 3600) / 60);
   const updSecond = timerCounter - (hour * 3600 + minute * 60);
 
-  // sets the analog timer
+  // converts the time to degress to set the angle of the clock hands
   const [secondsDegrees, minutesDegrees, hoursDegrees] = getDegrees(
     updSecond,
     minute,
@@ -190,7 +218,7 @@ function startTimer() {
 }
 
 function pauseTimer() {
-  // stops calling setTimer but the timerCounter keeps the count so that timing can be resumed.
+  // stops calling setTimer but the timerCounter keeps the count at the point of pause so that timing can be resumed.
   clearInterval(timer);
   setInactiveControls();
 }
@@ -239,7 +267,6 @@ function addLap() {
   const totalTime = digitalTimer.firstElementChild.innerHTML;
 
   // uses lapCounter to get the number of seconds, minutes, and hours elapsed in the lap.
-  // *********** understand this ****************
   const hour = Math.floor(lapCounter / 3600);
   const minute = Math.floor((lapCounter - hour * 3600) / 60);
   const updSecond = lapCounter - (hour * 3600 + minute * 60);
@@ -247,7 +274,7 @@ function addLap() {
   const lapTime = formatDigitalTime(updSecond, minute, hour);
 
   // add lap data to laps object
-  // totalLaps keeps track of how many laps have been added and is also the index of the latest lap
+  // totalLaps keeps track of how many laps have been added and is also the key of the latest lap
   laps[totalLaps] = {
     lapTime: lapTime,
     totalTime: totalTime,
@@ -280,7 +307,7 @@ function displayLap() {
 }
 
 // formats the latest lap into a table entry
-// totalLaps will also be the index of the latest lap
+// totalLaps will also be the key of the latest lap
 function getLapEntry() {
   return `<tr>
     <td>${totalLaps}</td>
@@ -288,22 +315,3 @@ function getLapEntry() {
     <td>${laps[totalLaps].totalTime}</td>
   </tr>`;
 }
-
-/*
-TO DO:
-understanding logic
-clean up comments
-modules? code organisation? refactoring functions? how should I order functions?
-make responsive
-*/
-
-/*
-Make notes/anki cards:
-query selector
-event listeners
-changing css with js (individual styles and setting classes)
-string literals
-++ at start vs ++ at end
-array destructuring
-look in sandbox files for more notes
-*/
